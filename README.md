@@ -1,2 +1,62 @@
 # opentelemetry-dotnet-simple
-A simple .NET example showcasing OpenTelemetry integration for collecting traces, logs, and metrics.
+This repository provides a simple example of a .NET Minimal API application instrumented with OpenTelemetry for collecting **traces**, **logs**, and **metrics**.
+---
+
+## **Prerequisites**
+
+To run this project, ensure you have the following installed on your system:
+- **.NET SDK 6 or later**: [Download .NET](https://dotnet.microsoft.com/download)
+---
+
+## **Project Overview**
+
+This application demonstrates how to integrate OpenTelemetry into a .NET application to observe and monitor application performance. It includes **Tracing**: Captures distributed trace data for better insight into application workflows; **Logging**: Provides structured logs to assist with debugging and analysis; **Metrics**: Collects performance and usage metrics to monitor system health. All telemetry data is exported to the console for simplicity.
+---
+
+## **Expected Output**
+
+When the application is running, a single request to `curl http://localhost:8080/rolldice` will produce the following consolidated output in the console:
+
+### **Metrics**:
+`Metric Name: kestrel.connection.duration, Description: The duration of connections on the server., Unit: s
+ network.protocol.name: http network.protocol.version: 1.1 network.transport: tcp network.type: ipv6 server.address: ::ffff:172.17.0.2 server.port: 8080 Histogram
+ Value: Sum: 0.11888409999999999 Count: 11 Min: 0.0029772 Max: 0.0778763 ..
+
+### **Logs**:
+'info: Program[0]
+      Anonymous player is rolling the dice: 2
+LogRecord.Timestamp:               2024-12-30T16:52:09.2573407Z
+LogRecord.TraceId:                 9792d60161ed2155b08eabcb0e19732a
+LogRecord.SpanId:                  cf570a949e7d2ab2
+LogRecord.TraceFlags:              Recorded
+LogRecord.CategoryName:            Program
+LogRecord.Severity:                Info
+LogRecord.SeverityText:            Information
+LogRecord.Body:                    Anonymous player is rolling the dice: {result}
+LogRecord.Attributes (Key:Value):
+    result: 2
+    OriginalFormat (a.k.a Body): Anonymous player is rolling the dice: {result}..
+
+### **Traces**:
+`Activity.TraceId:            be35a0ad7b40da9bc2454c7f789d5f55
+Activity.SpanId:             e0cd1b1305a4084b
+Activity.TraceFlags:         Recorded
+Activity.DisplayName:        GET /rolldice/{player?}
+Activity.Kind:               Server
+Activity.StartTime:          2024-12-30T16:53:58.2128575Z
+Activity.Duration:           00:00:00.0007445
+Activity.Tags:
+    server.address: localhost
+    server.port: 8090
+    http.request.method: GET
+    url.scheme: http
+    url.path: /rolldice.. 
+---
+
+## **Key File**
+
+The **`Program.cs`** file includes the OpenTelemetry setup and demonstrates trace, log, and metric collection in a minimal API.
+---
+
+## **Followed Resource**
+https://opentelemetry.io/docs/languages/net/getting-started/
