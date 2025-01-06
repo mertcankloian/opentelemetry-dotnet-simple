@@ -7,31 +7,50 @@ using OpenTelemetry.Trace;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
 const string serviceName = "roll-dice";
+const string otlpHttpEndpoint = "http://my-opentelemetry-collector.telemetry.svc.cluster.local:4318"; 
+const string otlpGrpcEndpoint = "http://my-opentelemetry-collector.telemetry.svc.cluster.local:4317"; 
 
-// otel logging
+
 builder.Logging.AddOpenTelemetry(options =>
 {
     options
         .SetResourceBuilder(
             ResourceBuilder.CreateDefault()
                 .AddService(serviceName))
-        .AddConsoleExporter(); 
+        .AddOtlpExporter(otlpOptions =>
+        {
+            otlpOptions.Endpoint = new Uri(otlpHttpEndpoint);
+        }); 
 });
 
-// otel tracing
+
 builder.Services.AddOpenTelemetry()
-      .ConfigureResource(resource => resource.AddService(serviceName))
-      .WithTracing(tracing => tracing
-          .AddAspNetCoreInstrumentation() 
-          .AddConsoleExporter()) 
-      .WithMetrics(metrics => metrics
-          .AddAspNetCoreInstrumentation()
-          .AddConsoleExporter());
+    .ConfigureResource(resource => resource.AddService(serviceName))
+    .WithTracing(tracing => tracing
+        .AddAspNetCoreInstrumentation() 
+        .AddHttpClientInstrumentation()
+        .AddOtlpExporter(otlpOptions =>
+        {
+            otlpOptions.Endpoint = new Uri(otlpGrpcEndpoint);
+        }) 
+        .AddOtlpExporter(otlpOptions =>
+        {
+            otlpOptions.Endpoint = new Uri(otlpHttpEndpoint);
+        }))
+    .WithMetrics(metrics => metrics
+        .AddAspNetCoreInstrumentation()
+        .AddHttpClientInstrumentation()
+        .AddOtlpExporter(otlpOptions =>
+        {
+            otlpOptions.Endpoint = new Uri(otlpGrpcEndpoint);
+        }) 
+        .AddOtlpExporter(otlpOptions =>
+        {
+            otlpOptions.Endpoint = new Uri(otlpHttpEndpoint);
+        }));
 
 var app = builder.Build();
-
 
 app.MapGet("/rolldice/{player?}", HandleRollDice);
 
