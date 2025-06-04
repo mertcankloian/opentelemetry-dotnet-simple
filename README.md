@@ -7,7 +7,6 @@ To run this project, ensure you have the following installed on your system:
 - **.NET SDK 6 or later**: [Download .NET](https://dotnet.microsoft.com/download)
 
 ## **Expected Output**
-
 When the application is running, a single request to `curl http://localhost:8080/rolldice` will produce the following consolidated output in the console:
 
 - **Metrics**:
