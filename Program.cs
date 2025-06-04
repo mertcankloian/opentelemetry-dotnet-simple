@@ -52,6 +52,7 @@ builder.Services.AddOpenTelemetry()
 
 var app = builder.Build();
 
+
 app.MapGet("/rolldice/{player?}", HandleRollDice);
 
 app.Run();
