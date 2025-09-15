@@ -7,9 +7,13 @@ using OpenTelemetry.Trace;
 
 var builder = WebApplication.CreateBuilder(args);
 
-const string serviceName = "roll-dice";
-const string otlpHttpEndpoint = "http://my-opentelemetry-collector.telemetry.svc.cluster.local:4318"; 
-const string otlpGrpcEndpoint = "http://my-opentelemetry-collector.telemetry.svc.cluster.local:4317"; 
+const string serviceName = "klo-roll-dice";
+
+var otlpHttpEndpoint = Environment.GetEnvironmentVariable("OTLP_HTTP_ENDPOINT")
+    ?? "http://my-opentelemetry-collector.telemetry.svc.cluster.local:4318";
+
+var otlpGrpcEndpoint = Environment.GetEnvironmentVariable("OTLP_GRPC_ENDPOINT")
+    ?? "http://my-opentelemetry-collector.telemetry.svc.cluster.local:4317";
 
 
 builder.Logging.AddOpenTelemetry(options =>
@@ -51,6 +55,7 @@ builder.Services.AddOpenTelemetry()
         }));
 
 var app = builder.Build();
+
 
 app.MapGet("/rolldice/{player?}", HandleRollDice);
 
